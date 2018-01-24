@@ -23,9 +23,7 @@ return array(
 
     // Header code, if placing markers for the first time.
     'header' => array(
-        '# Section added by allowme script ' . date('Y-m-d'),
-        'Order Deny,Allow',
-        'Deny from all'
+        '# Section added by allowme script ' . date('Y-m-d')
     ),
 
 );

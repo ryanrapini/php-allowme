@@ -76,8 +76,8 @@ if ($state == 'before') {
     // start of the file.
 
     // Move the before section to the end, with a blank line before it.
-    $content['after'] = $nl . $content['before'];
-    $content['before'] = implode($nl, $config['header']) . $nl;
+    $content['after'] = $nl . '</RequireAny>' . $nl . $content['before'];
+    $content['before'] = implode($nl, $config['header']) . $nl . '<RequireAny>' . $nl;
 }
 
 // Get the user's IP.
@@ -90,7 +90,7 @@ if (preg_match('/ '.$ip.'[^0-9]/', $content['within'])) die('IP already listed')
 
 // Still here? Add this IP.
 
-$content['within'] = 'Allow from ' . $ip . $nl . $content['within'];
+$content['within'] = 'Require ip ' . $ip . $nl . $content['within'];
 
 // Flatten the new file content.
 $flattened = array_reduce(
