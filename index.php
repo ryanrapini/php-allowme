@@ -12,19 +12,30 @@
  * There is an assumption that the htaccess file will not be too long,
  * and so can be easily processes in memory.
  * TODO: Take a backup of the file before writing.
- * TODO: if htaccess does not contain any markers, then place a pair
- * right at the start, with appropriate deny statements. [DONE]
  * FIXME: a blank line is being added to the end of the file, each time an
  * IP address is added. [HACK: remove *any* blank lines from the end]
  */
-
-// TODO: use a package to get the config data, which can include defaults
-// and overrides, and perhaps a config directory.
+$pass = $_POST['pass'];
 $config = include('allowme_config.php');
+
+if ($config['password'] != '')
+{
+    if (!isset($pass))
+    {
+        include('password_form.php');
+        die();
+    }
+    elseif ($pass != $config['password'])
+    {
+        echo("Wrong password! <a href='index.php'>Try again</a>");
+        die();
+    }
+}
+// We made it with the right password or no password
 
 $nl = $config['newline'];
 
-// Read teh current htaccess file into three variables: before, within, 
+// Read the current htaccess file into three variables: before, within, 
 // and after the section to update.
 
 // So we can detect various line endings when reading the htaccess file.
@@ -62,7 +73,6 @@ while(!feof($fd)) {
     }
 
     $content[$state] .= $line . $nl;
-    //echo "line=$line; ";
 }
 fclose($fd);
 
@@ -83,13 +93,12 @@ if ($state == 'before') {
 // Get the user's IP.
 $ip = $_SERVER['REMOTE_ADDR'];
 
-if (empty($ip) || !preg_match('/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/', $ip)) die('IP address not known');
+if (empty($ip)) die('IP address not known');
 
 // Look to see if the IP address is already there.
 if (preg_match('/ '.$ip.'[^0-9]/', $content['within'])) die('IP already listed');
 
 // Still here? Add this IP.
-
 $content['within'] = 'Require ip ' . $ip . $nl . $content['within'];
 
 // Flatten the new file content.
@@ -107,4 +116,4 @@ file_put_contents($config['htaccess'], $flattened, LOCK_EX);
 
 echo "IP added";
 
-//echo "<pre>"; var_dump($flattened); echo "</pre>";
+echo "<pre>"; var_dump($flattened); echo "</pre>";
