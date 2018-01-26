@@ -1,4 +1,10 @@
-Order Deny,Allow
-Allow from all
+# Move this .htaccess file to the directory that you wish to secure.
+# Make sure that you update allowme_config.php to point to the right
+# htaccess location!
+
+<RequireAny>
+
 # ALLOW-LIST-START
 # ALLOW-LIST-END
+
+</RequireAny>
